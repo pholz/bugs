@@ -1,5 +1,6 @@
-import java.util.*;
+import processing.opengl.*;
 
+import java.util.*;
 
 class Segment
 {
@@ -77,7 +78,7 @@ class Bug
     pushMatrix();
 
     translate(pos.x, pos.y);
-    ellipse(0, 0, 25, 25);
+   // ellipse(0, 0, 25, 25);
 
     popMatrix();
 
@@ -93,9 +94,13 @@ class Bug
     nh.mult(12.0f);
 
     PVector resh = PVector.sub(pos, nh);
+    PVector resh2 = PVector.add(pos, nh);
 
-    curveVertex(pos.x, pos.y);
-    curveVertex(pos.x, pos.y);
+    PVector front = PVector.mult(PVector.div(vel, vel.mag()), 10.0f);
+   // curveVertex(pos.x + front.x, pos.y +front.y);
+   curveVertex(resh2.x, resh2.y);
+     curveVertex(pos.x + front.x, pos.y +front.y);
+   // curveVertex(pos.x, pos.y);
     //curveVertex(resh.x, resh.y);
     curveVertex(resh.x, resh.y);
 
@@ -117,6 +122,12 @@ class Bug
 
       // segments.get(i).draw();
     }
+    
+    Segment end = segments.get(segments.size()-1);
+    PVector hind = PVector.sub(end.pos, segments.get(segments.size()-2).pos);
+    hind.normalize();
+    hind.mult(10.0f);
+    curveVertex(end.pos.x + hind.x, end.pos.y + hind.y);
 
     for(int i = segments.size()-1; i >= 0; i--)
     {
@@ -134,18 +145,37 @@ class Bug
       curveVertex(res.x, res.y);
     }
 
-    resh = PVector.add(pos, nh);
+    
 
-    curveVertex(resh.x, resh.y);
+    curveVertex(resh2.x, resh2.y);
    // curveVertex(resh.x, resh.y);
-    curveVertex(pos.x, pos.y);
-    curveVertex(pos.x, pos.y);
+   // curveVertex(pos.x, pos.y);
+   // curveVertex(pos.x, pos.y);
+    curveVertex(pos.x + front.x, pos.y +front.y);
+   //  curveVertex(pos.x + front.x, pos.y +front.y);
+   curveVertex(resh.x, resh.y);
     endShape();
+    
+    
+    
+    /// DIRT
+    
+    if(random(100) > 93)
+    {
+       dirt.beginDraw();
+       dirt.noStroke();
+       dirt.fill(color(random(40,60),0,0, random(10)));
+       for(int i = 0; i < 30; i++)
+         dirt.ellipse(pos.x + random(8), pos.y + random(8), random(1, 5), random(1, 5));
+       
+       dirt.endDraw();
+    }
   }
 }
 
 ArrayList<Bug> bugs;
 float last;
+PGraphics dirt;
 
 float randomNormal()
 {
@@ -164,6 +194,12 @@ void setup()
 {
   size(1024, 768);
   smooth();
+  
+  dirt = createGraphics(1024, 768, P2D);
+  dirt.beginDraw();
+  dirt.background(color(255));
+  dirt.smooth();
+  dirt.endDraw();
 
   bugs = new ArrayList<Bug>();
 
@@ -208,10 +244,20 @@ void draw()
   update();
 
   background(color(255));
+  
+  /*
+  dirt.beginDraw();
+  dirt.fill(color(255, 255, 255, 1));
+  dirt.rect(0, 0, width, height);
+  dirt.endDraw();
+  */
+  image(dirt, 0, 0);
 
   for(int i = 0; i < bugs.size(); i++)
   {
     bugs.get(i).draw();
   }
+  
 }
+
 
