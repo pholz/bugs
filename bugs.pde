@@ -55,16 +55,11 @@ class Bug
     pos.add(PVector.mult(vel, dt)); 
 
     segments.get(0).vel = PVector.sub(pos, segments.get(0).pos);
-    //segments.get(0).vel.normalize();
-    //segments.get(0).vel.mult(vel.mag());
     segments.get(0).update(dt);
 
     for(int i = 1; i < segments.size(); i++)
     {
       segments.get(i).vel = PVector.sub(segments.get(i-1).pos, segments.get(i).pos);
-      //segments.get(i).vel.normalize();
-      //segments.get(i).vel.mult(segments.get(i-1).vel.mag());
-
       segments.get(i).update(dt);
     }
   }
@@ -72,7 +67,6 @@ class Bug
   public void draw()
   {
     fill(color(0));
-    //stroke(color(200, 0, 0));
     noStroke();
 
     pushMatrix();
@@ -97,11 +91,9 @@ class Bug
     PVector resh2 = PVector.add(pos, nh);
 
     PVector front = PVector.mult(PVector.div(vel, vel.mag()), 10.0f);
-   // curveVertex(pos.x + front.x, pos.y +front.y);
-   curveVertex(resh2.x, resh2.y);
-     curveVertex(pos.x + front.x, pos.y +front.y);
-   // curveVertex(pos.x, pos.y);
-    //curveVertex(resh.x, resh.y);
+    
+    curveVertex(resh2.x, resh2.y);
+    curveVertex(pos.x + front.x, pos.y +front.y);
     curveVertex(resh.x, resh.y);
 
     for(int i = 0; i < segments.size(); i++)
@@ -119,8 +111,6 @@ class Bug
       PVector res = PVector.sub(s.pos, n);
 
       curveVertex(res.x, res.y);
-
-      // segments.get(i).draw();
     }
     
     Segment end = segments.get(segments.size()-1);
@@ -145,15 +135,9 @@ class Bug
       curveVertex(res.x, res.y);
     }
 
-    
-
     curveVertex(resh2.x, resh2.y);
-   // curveVertex(resh.x, resh.y);
-   // curveVertex(pos.x, pos.y);
-   // curveVertex(pos.x, pos.y);
     curveVertex(pos.x + front.x, pos.y +front.y);
-   //  curveVertex(pos.x + front.x, pos.y +front.y);
-   curveVertex(resh.x, resh.y);
+    curveVertex(resh.x, resh.y);
     endShape();
     
     
@@ -192,12 +176,12 @@ float randomNormal()
 
 void setup()
 {
-  size(1024, 768);
+  size(700, 600);
   smooth();
   
-  dirt = createGraphics(1024, 768, P2D);
+  dirt = createGraphics(width, height, P2D);
   dirt.beginDraw();
-  dirt.background(color(255));
+  dirt.background(color(255, 120, 3));
   dirt.smooth();
   dirt.endDraw();
 
@@ -243,15 +227,17 @@ void draw()
 {
   update();
 
-  background(color(255));
-  
-  /*
-  dirt.beginDraw();
-  dirt.fill(color(255, 255, 255, 1));
-  dirt.rect(0, 0, width, height);
-  dirt.endDraw();
-  */
+  background(color(255, 120, 3));
+
   image(dirt, 0, 0);
+  
+  stroke(color(255, 115, 0, 200));
+  for(int i = 0; i < 100; i++)
+  {
+      line(random(0, width), 0, random(0, width), height);
+      line(0, random(0, height), width, random(0, height));
+  }
+  noStroke();
 
   for(int i = 0; i < bugs.size(); i++)
   {
